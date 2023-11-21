@@ -57,24 +57,24 @@ function drawScatterplot(data) {
 
     var parseTime = d3.timeFormat("%b %d %Y");
 
-        let xScale = d3.scaleTime()
-            .domain(d3.extent(data, function(d) { return d.year }))   //d.announced
-            .range([margin.left, width])
-            console.log(d3.extent(data, function(d) { return d.year })); //d.announced
+        // let xScale = d3.scaleTime()
+        //     .domain(d3.extent(data, function(d) { return d.year }))   //d.announced
+        //     .range([margin.left, width])
+        //     console.log(d3.extent(data, function(d) { return d.year })); //d.announced
 
 
         //UNCOMMENT THIS BELOW
 
-        // let xScale = d3.scaleTime()
-        //     .domain(d3.extent(data, function(d) { 
-        //         d.announced = (new Date(d.announced))
-        //         d.announced = parseTime(d.announced)
-        //         return (new Date(d.announced)) }))   //d.announced
-        //     .range([margin.left, width])
-        //     console.log(d3.extent(data, function(d) { 
-        //         d.announced = (new Date(d.announced))
-        //         d.announced = parseTime(d.announced)
-        //         return typeof d.announced })); //d.announced
+        let xScale = d3.scaleTime()
+            .domain(d3.extent(data, function(d) { 
+                d.announced = (new Date(d.announced))
+                d.announced = parseTime(d.announced)
+                return (new Date(d.announced)) }))   //d.announced
+            .range([margin.left, width])
+            console.log(d3.extent(data, function(d) { 
+                d.announced = (new Date(d.announced))
+                d.announced = parseTime(d.announced)
+                return typeof d.announced })); //d.announced
 
 
     // add x axis
