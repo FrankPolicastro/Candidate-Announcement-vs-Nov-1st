@@ -6,6 +6,7 @@ function main() {
         data.forEach(function(row) {
             row.year = +row.year;
             row.daysAfterMidtermsAnnounced = +row.daysAfterMidtermsAnnounced;
+            row.id = +row.id;
         
         });
 
@@ -63,9 +64,16 @@ function drawScatterplot(data) {
         });
 
     // create x scale
-    let xScale = d3.scaleLinear()
-        .domain(d3.extent(data, function(d) { return d.daysAfterMidtermsAnnounced }))
-        .range([margin.left, width]);
+    // let xScale = d3.scaleLinear()
+    //     .domain(d3.extent(data, function(d) { return d.daysAfterMidtermsAnnounced }))
+    //     .range([margin.left, width]);
+
+        let xScale = d3.scaleLinear()
+            .domain(d3.extent(data, function(d) { return d.year }))
+            //console.log(d3.extent(data, function(d) { return d.year }))
+            .range([margin.left, width]);
+
+
     // add x axis
 
     //add background color - FP 11-8-2023
@@ -78,12 +86,20 @@ function drawScatterplot(data) {
         .style("font", "14px times") // increase font FP 11-8-2023
         .attr("class", "axis")
         .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale));
+        .call(d3.axisBottom(xScale)
+        .tickFormat(d3.format('d'))
+        );
     
     // create y scale
-    const yScale = d3.scaleLinear()
-        .domain(d3.extent(data, function(d) { return d.year }))
-        .range([75, height-75]); // move y axis above x axis FP 11-8-2023
+    // const yScale = d3.scaleLinear()
+    //     .domain(d3.extent(data, function(d) { return d.year }))
+    //     .range([75, height-75]); // move y axis above x axis FP 11-8-2023
+         const yScale = d3.scaleLinear()
+            .domain(d3.extent(data, function(d) { return d.id }))
+            .range([75, height-75]); // move y axis above x axis FP 11-8-2023
+
+
+
     // add Y axis
     //console.log(d3)
     svg.append("g")
@@ -116,8 +132,8 @@ function drawScatterplot(data) {
         .enter()
         .append("circle")
         .attr('class', 'announcedCircle')
-        .attr("cx", function(row) { return xScale(row.daysAfterMidtermsAnnounced)})
-        .attr("cy", function(row) { return yScale(row.year)})
+        .attr("cx", function(row) { return xScale(row.year)})
+        .attr("cy", function(row) { return yScale(row.id)})
         .attr("r", 5) // changed teh circle size to '5' - FP 11-8-2023
         //.style("fill", 'blue') // changed the color to 'blue' - FP 11-8-2023
         // dynamic color change from 'red' to 'blue' - FP 11-13-2023
