@@ -1,0 +1,27 @@
+body {
+    font-family: gam;
+    font-size: 16px;
+    /* font-weight: 300; */
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+div {
+    width: 90%;
+    border: 1px black solid;
+}
+
+div.tips {	
+    width: 100px;
+    position: absolute;			
+    text-align: center;								
+    padding: .5rem;				
+    background: #FFFFFF;
+    color: #313639;	
+    border: 1px solid #313639;		
+    border-radius: 8px;			
+    pointer-events: none;
+    font-size: 1rem;			
+}
