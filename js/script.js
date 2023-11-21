@@ -2,12 +2,19 @@ function main() {
     // use D3 to read in data
     // Parse the Data
     d3.csv("data/primaryCandidates.csv").then( function(data) {
+
+        var parseTime = d3.timeFormat("%b %d %Y");
         
         data.forEach(function(row) {
             row.year = +row.year;
             row.daysAfterMidtermsAnnounced = +row.daysAfterMidtermsAnnounced;
             row.id = +row.id;
-        
+            //row.announced = parseTime(new Date(row.announced))
+            //console.log((new Date(row.announced)))
+            row.announced = (new Date(row.announced))
+            row.announced = parseTime(row.announced)
+            console.log(row.announced)
+        /console.log(new Date(row.announced))
         });
 
         drawScatterplot(data);
@@ -63,15 +70,32 @@ function drawScatterplot(data) {
                 .style("opacity", 0);
         });
 
+
     // create x scale
     // let xScale = d3.scaleLinear()
     //     .domain(d3.extent(data, function(d) { return d.daysAfterMidtermsAnnounced }))
     //     .range([margin.left, width]);
 
-        let xScale = d3.scaleLinear()
-            .domain(d3.extent(data, function(d) { return d.year }))
-            //console.log(d3.extent(data, function(d) { return d.year }))
-            .range([margin.left, width]);
+    var parseTime = d3.timeFormat("%b %d %Y");
+
+        // let xScale = d3.scaleTime()
+        //     .domain(d3.extent(data, function(d) { return d.year }))   //d.announced
+        //     .range([margin.left, width])
+        //     console.log(d3.extent(data, function(d) { return d.year })); //d.announced
+
+
+        //UNCOMMENT THIS BELOW
+
+        let xScale = d3.scaleTime()
+            .domain(d3.extent(data, function(d) { 
+                d.announced = (new Date(d.announced))
+                d.announced = parseTime(d.announced)
+                return (new Date(d.announced)) }))   //d.announced
+            .range([margin.left, width])
+            console.log(d3.extent(data, function(d) { 
+                d.announced = (new Date(d.announced))
+                d.announced = parseTime(d.announced)
+                return typeof d.announced })); //d.announced
 
 
     // add x axis
@@ -140,5 +164,7 @@ function drawScatterplot(data) {
         .style("fill", function(row){ return row.party == 'D' ? 'blue' : 'red' })
         .style('opacity', 0.75); 
 }
+
+
 
 main();
