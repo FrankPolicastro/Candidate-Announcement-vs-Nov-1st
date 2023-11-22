@@ -25,3 +25,11 @@ div.tips {
     pointer-events: none;
     font-size: 1rem;			
 }
+
+.theDate,
+.theDate line,
+.theDate path {
+	fill: #020202;
+	stroke: #080808;
+	stroke-width: .25;
+}
