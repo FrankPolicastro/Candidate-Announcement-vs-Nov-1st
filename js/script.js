@@ -13,8 +13,8 @@ function main() {
             //console.log((new Date(row.announced)))
             row.announced = (new Date(row.announced))
             row.announced = parseTime(row.announced)
-            console.log(row.announced)
-        /console.log(new Date(row.announced))
+            //console.log(row.announced)
+        //console.log(new Date(row.announced))
         });
 
         drawScatterplot(data);
@@ -24,8 +24,9 @@ function main() {
 function drawScatterplot(data) {
     
     const margin = {top: 50, right: 50, bottom: 50, left: 50};
-    const width = window.innerWidth * 0.5;
+    const width = window.innerWidth * 1;
     const height = window.innerHeight * 0.5;
+    const midtermDates = ["11/7/2006", "11/2/2010", "11/4/2014", "11/6/2018", "11/8/2022"]
     
     // append the svg object to the body of the page
     // document.getElementById("scatterplot") = d3.select("#scatterplot")
@@ -56,6 +57,8 @@ function drawScatterplot(data) {
     //     .range([margin.left, width]);
 
     var parseTime = d3.timeFormat("%b %d %Y");
+    //var format = d3.time.format("%b-%d-%Y");
+    //console.log(format(new Date(1075611600000))); // returns a string
 
         // let xScale = d3.scaleTime()
         //     .domain(d3.extent(data, function(d) { return d.year }))   //d.announced
@@ -65,15 +68,16 @@ function drawScatterplot(data) {
 
         //UNCOMMENT THIS BELOW
 
-        let xScale = d3.scaleTime()
+        let xScale = d3.scaleLinear()
             .domain(d3.extent(data, function(d) { 
                 d.announced = (new Date(d.announced))
-                d.announced = parseTime(d.announced)
-                return (new Date(d.announced)) }))   //d.announced
-            .range([margin.left, width])
+                //d.announced = parseTime(d.announced)
+                //return (new Date(d.announced)) }))   //d.announced
+                return (d.announced) }))
+            .range([margin.left, width]);
             console.log(d3.extent(data, function(d) { 
                 d.announced = (new Date(d.announced))
-                d.announced = parseTime(d.announced)
+                //d.announced = parseTime(d.announced)
                 return typeof d.announced })); //d.announced
 
 
@@ -90,7 +94,7 @@ function drawScatterplot(data) {
         .attr("class", "axis")
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(xScale)
-        .tickFormat(d3.format('d'))
+        .tickFormat(d3.timeFormat('%x'))
         );
     
     // create y scale
@@ -126,7 +130,27 @@ function drawScatterplot(data) {
         //     else 
         //        { return d}
         //})
+    
+    var theDate = new Date("2018/11/6");
+    console.log(theDate)
+    //var today = theDate.getMonth()+1 + "/" + theDate.getDate() + "/" +     theDate.getFullYear();
         
+    svg.append("line")
+         .attr("class", "theDate")
+         //.attr("x1", xScale(theDate))
+         .attr("x1", xScale(new Date(midtermDates[1])))
+         .attr("x3", xScale(new Date(midtermDates[0])))
+         .attr("y1", height)
+         //.attr("x2", xScale(theDate))
+         //.attr("x1", midtermDates.forEach(function(d){return xScale(new Date(d))}))
+         .attr("x2", xScale(new Date(midtermDates[1])))
+         .attr("x4", xScale(new Date(midtermDates[0])))
+         .attr("y2", 0);  
+        
+    midtermDates.forEach(function(d){ return console.log( new Date(d))})     
+
+
+
         //.ticks(5)
 
     // add circles
@@ -135,7 +159,7 @@ function drawScatterplot(data) {
         .enter()
         .append("circle")
         .attr('class', 'announcedCircle')
-        .attr("cx", function(row) { return xScale(row.year)})
+        .attr("cx", function(row) { return xScale(row.announced)})
         .attr("cy", function(row) { return yScale(row.id)})
         .attr("r", 5) // changed teh circle size to '5' - FP 11-8-2023
         //.style("fill", 'blue') // changed the color to 'blue' - FP 11-8-2023
@@ -149,9 +173,10 @@ function drawScatterplot(data) {
             tips.transition()
                 .duration(50)
                 .style("opacity", 1);
-            let num = (d.srcElement.__data__.candidate);
-            console.log(num);
-            tips.html(num)
+            let candName = (d.srcElement.__data__.candidate);
+            let candYear = (d.srcElement.__data__.announced);
+            console.log(candName);
+            tips.html(candName + "<br>" + candYear)
                 .style("left", (d.pageX + 10) + "px")
                 .style("top", (d.pageY - 15) + "px");
         
