@@ -5,6 +5,7 @@ function main() {
 
         var parseTime = d3.timeFormat("%b %d %Y");
         
+        
         data.forEach(function(row) {
             row.year = +row.year;
             row.daysAfterMidtermsAnnounced = +row.daysAfterMidtermsAnnounced;
@@ -24,7 +25,7 @@ function main() {
 function drawScatterplot(data) {
     
     const margin = {top: 50, right: 50, bottom: 50, left: 50};
-    const width = window.innerWidth * 1;
+    const width = window.innerWidth * 0.9;
     const height = window.innerHeight * 0.5;
     const midtermDates = ["11/7/2006", "11/2/2010", "11/4/2014", "11/6/2018", "11/8/2022"]
     
@@ -32,7 +33,8 @@ function drawScatterplot(data) {
     // document.getElementById("scatterplot") = d3.select("#scatterplot")
 
     //11-20-2023 - add tips
-    const tips = d3.select("body").append("div")
+    const tips = d3
+        .select("body").append("div")
         .attr("class", "tips")
         .style("opacity", 0);
     //11-20-2023 - add tips
@@ -75,10 +77,10 @@ function drawScatterplot(data) {
                 //return (new Date(d.announced)) }))   //d.announced
                 return (d.announced) }))
             .range([margin.left, width]);
-            console.log(d3.extent(data, function(d) { 
-                d.announced = (new Date(d.announced))
+            //console.log(d3.extent(data, function(d) { 
+            //    d.announced = (new Date(d.announced))
                 //d.announced = parseTime(d.announced)
-                return typeof d.announced })); //d.announced
+            //    return typeof d.announced })); //d.announced
 
 
     // add x axis
@@ -132,22 +134,107 @@ function drawScatterplot(data) {
         //})
     
     var theDate = new Date("2018/11/6");
-    console.log(theDate)
+    //console.log(theDate)
     //var today = theDate.getMonth()+1 + "/" + theDate.getDate() + "/" +     theDate.getFullYear();
+    
+    //11-24-2023: Vertical lines denoting midterm dates
+    // svg.append("line")
+    //      .style("stroke", "blue")
+    //      .style("stroke-width", .8)
+    //      .attr("class", "theLine")
+    //      //.attr("x1", xScale(theDate))
+    //      .attr("x1", xScale(new Date(midtermDates[1])))
+    //      .attr("x2", xScale(new Date(midtermDates[1])))       
+    //      .attr("y1", height)
+    //      .attr("y2", 0); 
+         
+    //11-24-2023: append loop for vertical midtermyear lines
+    //THIS WAS INTERESTING
+    
+            // for (var i = 0; i < midtermDates.length; i++) {
+            //     //console.log(new Date (midtermDates[i]));
+            //     //var filteredData = (function(d) {
+            //     //    return (new Date (midtermDates[i]));
+            //     //});
+            //     console.log(i);
+            //     var lines = svg.selectAll(null)
+            //       .data(midtermDates)
+            //       .enter()
+            //       .append("line")
+            //       .attr("class", "theLine")
+            //       .attr("x1", function(d) {
+            //         return xScale(new Date(midtermDates[i]))
+            //       })
+            //       .attr("x2", function(d) {
+            //         return xScale(new Date(midtermDates[i]))
+            //       })
+            //       .attr("y1", function(d) {
+            //         return height
+            //       })
+            //       .attr("y2", 0)
+            //       .style("stroke", "blue");
+            //       //.style("stroke-width", .8);
+              
+            //   };
+
+            //11-24-2023: 2nd attempt to append vertical midtermyear lines
+            var lines = svg.selectAll(null)
+                .data(midtermDates)
+                .enter()
+                .append("line")
+                .attr("class", "theLine")
+                //.attr("x1", function(d, i) {return xScale(new Date(d))})
+                .attr("x1", function(d, i) {return xScale(new Date(d))})
+                //.attr("x2", function(d, i) {return xScale(new Date(d))})   
+                .attr("x2", function(d, i) {return xScale(new Date(d))})
+                .attr("y1", function(d, i) {return height})
+                .attr("y2", 0)
+                .attr('opacity', '1')
+                .attr('indx', function(d, i) {return i})
+                .style("stroke", "blue")
+                .style("stroke-width", .8)
+                .on('mouseover', function (d) {
+                    d3.select(this).transition()
+                        .duration('50')
+                        .attr('opacity', '.15');
+                    tips.transition()
+                        .duration(50)
+                        .style("opacity", 1);
+                    //let midtrmyr = (midtermDates);
+                    let indx = d.target.getAttribute('indx');
+                    console.log(indx);
+                    tips.html(midtermDates[indx])
+                        .style("left", (d.pageX + 10) + "px")
+                        .style("top", (d.pageY - 15) + "px");
+                
+                })
+                .on('mouseout', function (d) {
+                    d3.select(this).transition()
+                        .duration('50')
+                        .attr('opacity', '1');
+                        tips.transition()
+                        .duration('50')
+                        .style("opacity", 0);
+                }); 
+
+    // svg.append("line")
+    //      //.append("line") 
+    //      .attr("class", "theLine")
+    //      //.attr("x1", xScale(theDate))   
+    //      .attr("fill",  "white")
+    //      .attr("x1", xScale(new Date(midtermDates[3])))
+    //      .attr("x2", xScale(new Date(midtermDates[3])))
+    //      .attr("y1", height)
+    //      .attr("y2", 0);
+    
+    //11-24-2023: Add second set of mouse-over & outs for vertical mid term year lines
+    //svg.select('.theLine')
+         
+
+        //Added Mouse test
         
-    svg.append("line")
-         .attr("class", "theDate")
-         //.attr("x1", xScale(theDate))
-         .attr("x1", xScale(new Date(midtermDates[1])))
-         .attr("x3", xScale(new Date(midtermDates[0])))
-         .attr("y1", height)
-         //.attr("x2", xScale(theDate))
-         //.attr("x1", midtermDates.forEach(function(d){return xScale(new Date(d))}))
-         .attr("x2", xScale(new Date(midtermDates[1])))
-         .attr("x4", xScale(new Date(midtermDates[0])))
-         .attr("y2", 0);  
-        
-    midtermDates.forEach(function(d){ return console.log( new Date(d))})     
+
+    //midtermDates.forEach(function(d){ return console.log( new Date(d))})     
 
 
 
@@ -175,8 +262,10 @@ function drawScatterplot(data) {
                 .style("opacity", 1);
             let candName = (d.srcElement.__data__.candidate);
             let candYear = (d.srcElement.__data__.announced);
+            var parseSDt = d3.timeFormat("%x");  //11-24-2023: why did parseTime work but parseSDt had to be declared closer to this append?
+            let candYearfmt = parseSDt(candYear);
             console.log(candName);
-            tips.html(candName + "<br>" + candYear)
+            tips.html(candName + "<br>" + candYearfmt)
                 .style("left", (d.pageX + 10) + "px")
                 .style("top", (d.pageY - 15) + "px");
         
