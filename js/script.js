@@ -69,18 +69,27 @@ function drawScatterplot(data) {
 
 
         //UNCOMMENT THIS BELOW
+        //WORKING 11/26/2023
+        // let xScale = d3.scaleLinear()
+        //     .domain(d3.extent(data, function(d) { 
+        //         d.announced = (new Date(d.announced))
+        //         //d.announced = parseTime(d.announced)
+        //         //return (new Date(d.announced)) }))   //d.announced
+        //         return (d.announced) }))
+        //     .range([margin.left, width]);
+        //     //console.log(d3.extent(data, function(d) { 
+        //     //    d.announced = (new Date(d.announced))
+        //         //d.announced = parseTime(d.announced)
+        //     //    return typeof d.announced })); //d.announced
 
-        let xScale = d3.scaleLinear()
-            .domain(d3.extent(data, function(d) { 
-                d.announced = (new Date(d.announced))
-                //d.announced = parseTime(d.announced)
-                //return (new Date(d.announced)) }))   //d.announced
-                return (d.announced) }))
-            .range([margin.left, width]);
-            //console.log(d3.extent(data, function(d) { 
-            //    d.announced = (new Date(d.announced))
-                //d.announced = parseTime(d.announced)
-            //    return typeof d.announced })); //d.announced
+        //CONVERTED TO TIMESCALE 11/26/2023
+        let xScale = d3.scaleTime()
+            .domain(d3.extent(data, function(d) {d.announced = (new Date(d.announced)) 
+                return (d.announced)}))
+            .range([margin.left-35, width])
+            console.log(d3.extent(data, function(d) {d.announced = (new Date(d.announced)) 
+                return (d.announced)}));
+
 
 
     // add x axis
@@ -96,7 +105,8 @@ function drawScatterplot(data) {
         .attr("class", "axis")
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(xScale)
-        .tickFormat(d3.timeFormat('%x'))
+        .ticks(20)
+        .tickFormat(d3.timeFormat('%b %Y')) //11-26-2023 - cleaned up x axis labels
         );
     
     // create y scale
@@ -105,7 +115,7 @@ function drawScatterplot(data) {
     //     .range([75, height-75]); // move y axis above x axis FP 11-8-2023
          const yScale = d3.scaleLinear()
             .domain(d3.extent(data, function(d) { return d.id }))
-            .range([75, height-75]); // move y axis above x axis FP 11-8-2023
+            .range([0, height-15]); // move y axis above x axis FP 11-8-2023
 
 
 
