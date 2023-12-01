@@ -25,8 +25,9 @@ function main() {
 function drawScatterplot(data) {
     
     const margin = {top: 50, right: 50, bottom: 50, left: 50};
-    const width = window.innerWidth * 0.9;
-    const height = window.innerHeight * 0.5;
+    const divWidth = document.getElementById("scatterplot").offsetWidth;
+    const width = divWidth * 0.9;
+    const height = window.innerHeight * 0.75;
     const midtermDates = ["11/7/2006", "11/2/2010", "11/4/2014", "11/6/2018", "11/8/2022"]
     
     // append the svg object to the body of the page
@@ -43,7 +44,7 @@ function drawScatterplot(data) {
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .style("background-color", "pink")
+        //.style("background-color", "pink")
         .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`)
                 
@@ -106,7 +107,7 @@ function drawScatterplot(data) {
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(xScale)
         .ticks(20)
-        .tickFormat(d3.timeFormat('%b %Y')) //11-26-2023 - cleaned up x axis labels
+        .tickFormat(d3.timeFormat('%Y')) //11-26-2023 - cleaned up x axis labels
         );
     
     // create y scale
@@ -199,14 +200,11 @@ function drawScatterplot(data) {
                 .attr("x2", function(d, i) {return xScale(new Date(d))})
                 .attr("y1", function(d, i) {return height})
                 .attr("y2", 0)
-                .attr('opacity', '1')
                 .attr('indx', function(d, i) {return i})
-                .style("stroke", "blue")
-                .style("stroke-width", .8)
                 .on('mouseover', function (d) {
                     d3.select(this).transition()
                         .duration('50')
-                        .attr('opacity', '.15');
+                        .style('opacity', '1');
                     tips.transition()
                         .duration(50)
                         .style("opacity", 1);
@@ -221,8 +219,8 @@ function drawScatterplot(data) {
                 .on('mouseout', function (d) {
                     d3.select(this).transition()
                         .duration('50')
-                        .attr('opacity', '1');
-                        tips.transition()
+                        .style('opacity', '0.75');
+                    tips.transition()
                         .duration('50')
                         .style("opacity", 0);
                 }); 
@@ -258,11 +256,8 @@ function drawScatterplot(data) {
         .attr('class', 'announcedCircle')
         .attr("cx", function(row) { return xScale(row.announced)})
         .attr("cy", function(row) { return yScale(row.id)})
-        .attr("r", 5) // changed teh circle size to '5' - FP 11-8-2023
-        //.style("fill", 'blue') // changed the color to 'blue' - FP 11-8-2023
         // dynamic color change from 'red' to 'blue' - FP 11-13-2023
         .style("fill", function(row){ return row.party == 'D' ? 'blue' : 'red' })
-        .style('opacity', 0.75)
         .on('mouseover', function (d) {
             d3.select('announcedCircle').transition()
                 .duration('50')

@@ -3,14 +3,15 @@ body {
     font-size: 16px;
     /* font-weight: 300; */
     background-color: white;
-    margin: 0;
+    margin: 10;
     padding: 0;
     overflow-x: hidden;
 }
 
 div {
     width: 90%;
-    border: 1px black solid;
+    /* border: 1px black solid; */
+    margin: auto;
 }
 
 div.tips {	
@@ -32,4 +33,17 @@ div.tips {
 	fill: #020202;
 	stroke: #080808;
 	stroke-width: .25;
+}
+
+.theLine {
+    stroke: gray;
+    stroke-width: 1;
+    stroke-dasharray: 8;
+    opacity: 0.75;
+}
+
+.announcedCircle {
+    r: 7.5;
+    opacity: 0.75;
+    stroke: black;
 }
