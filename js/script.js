@@ -334,8 +334,13 @@ function drawScatterplot(data) {
         // dynamic color change from 'red' to 'blue' - FP 11-13-2023
         .style("fill", function(row){
             //console.log(row.party + " " + row.withdrew) 
-            if (row.withdrew == "Invalid Date") {return "green"}
+            
+            if (row.wonNomination == 1 && row.imcumbant == 2) {return "yellow"}
+            else if (row.wonNomination == 1 && row.imcumbant == 0) {return "grey"}
+            else if (row.wonNomination == 1 && row.imcumbant == 1) {return "yellow"}
+            else if (row.wonNomination == 1 && row.imcumbant == 3) {return "grey"}
             else if (row.party == 'D') {return "blue"}
+            else if (row.withdrew == "Invalid Date") {return "green"}
             else {return "red"};})
             //
             
