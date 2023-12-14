@@ -279,6 +279,8 @@ function drawScatterplot(data) {
         .attr('class', 'announcedCircle')
         .attr("cx", function(row) { return xScale(row.announced)})
         .attr("cy", function(row) { return yScale(row.id)})
+        
+
         // dynamic color change from 'red' to 'blue' - FP 11-13-2023
         .style("fill", function(row){ return row.party == 'D' ? 'blue' : 'red' })
         // .style("visibility", function(row) {
@@ -288,6 +290,10 @@ function drawScatterplot(data) {
                 else if (row.announced == "Tue Nov 05 2024 00:00:00 GMT-0500 (Eastern Standard Time)") {return "hidden"}
                 else if (row.announced == "Invalid Date") {return "hidden"}
                 else {return "visible"};})
+        
+                //STAR
+        //.attr("src", "https://upload.wikimedia.org/wikipedia/commons/6/63/Star%2A.svg")
+        
         .on('mouseover', function (d) {
             d3.select('announcedCircle').transition()
                 .duration('50')
@@ -351,19 +357,27 @@ function drawScatterplot(data) {
                 .style("opacity", 1);
             let candName = (d.srcElement.__data__.candidate);
             let candwthdr = (d.srcElement.__data__.withdrew);
+            
+            var parseSDt = d3.timeFormat("%x");  //11-24-2023: why did parseTime work but parseSDt had to be declared closer to this append?
             if (candwthdr == "Invalid Date") {
                 candwthdr = d3.timeDay()
-                statusvar = "Active";}
+                statusvar = "Active";
+                candYearfmt = ""
+                tipcolor = "green"
+                hoverMsg = statusvar + "<br>" + candYearfmt}
             else {
                 candwthdr = (d.srcElement.__data__.withdrew)
-                statusvar = "Withdrew"};
-            var parseSDt = d3.timeFormat("%x");  //11-24-2023: why did parseTime work but parseSDt had to be declared closer to this append?
-            let candYearfmt = parseSDt(candwthdr);
-            //console.log(candwthdr);
-            tips.html(candName + "<br>" + statusvar + "<br>" + candYearfmt)
+                statusvar = "Withdrew"
+                candYearfmt = parseSDt(candwthdr)
+                tipcolor = "red"
+                hoverMsg = statusvar + "<br>" + candYearfmt}
+                console.log(candName + "<br>" + "<span style=\"color:" + tipcolor + "\">" + statusvar + "</span>" + "<br>" + candYearfmt)
+            // tips.html(candName + "<br>" + "Announced" + "<br>" + candYearfmt)
+                
+            tips.html(candName + "<br>" + "<span style=\"color:" + tipcolor + "\">" + statusvar + "</span>" + "<br>" + candYearfmt)
                 .style("left", (d.pageX + 10) + "px")
                 .style("top", (d.pageY - 15) + "px");
-        
+                //.style("color", tipcolor);
         })
         .on('mouseout', function (d) {
             d3.select('withdrewCircle').transition()
