@@ -122,9 +122,15 @@ function drawScatterplot(data) {
     // const yScale = d3.scaleLinear()
     //     .domain(d3.extent(data, function(d) { return d.year }))
     //     .range([75, height-75]); // move y axis above x axis FP 11-8-2023
-         const yScale = d3.scaleLinear()
-            .domain(d3.extent(data, function(d) { return d.id }))
-            .range([0, height-15]); // move y axis above x axis FP 11-8-2023
+
+    //12-13-2023
+        //  const yScale = d3.scaleLinear()
+        //     .domain(d3.extent(data, function(d) { return d.id }))
+        //     .range([0, height-15]); // move y axis above x axis FP 11-8-2023
+        const yScale = d3.scaleBand()
+                .domain(data.map(function(d) { return d.candidate }))
+                .range([0, height-15]); // move y axis above x axis FP 11-8-2023
+
 
 
 
@@ -134,9 +140,12 @@ function drawScatterplot(data) {
         .style("font", "14px times") // increase font FP 11-8-2023
         .attr("class", "axis")
         .attr("transform", `translate(0, 0)`)
-        .call(d3.axisLeft(yScale)
-        .tickFormat(d3.format('d'))  //tickFormat to remove commas - FP 11-8-2023
-        );
+        .call(d3.axisLeft(yScale).tickSizeOuter(0).tickSize(0))
+        .selectAll("text")
+                .style("text-anchor", "start")
+                .style("transform", `translate(-${margin.left-2}px, 0`)
+        //.tickFormat(d3.format('d'))  //tickFormat to remove commas - FP 11-8-2023
+        
         //.ticks(d3.utcYear.every(3))
         //.tickFormat(d3.format('d')));  //tickFormat to remove commas - FP 11-8-2023
         // .tickFormat(function(d) {
@@ -364,22 +373,52 @@ function drawScatterplot(data) {
             let candwthdr = (d.srcElement.__data__.withdrew);
             
             var parseSDt = d3.timeFormat("%x");  //11-24-2023: why did parseTime work but parseSDt had to be declared closer to this append?
-            if (candwthdr == "Invalid Date") {
+            if (candwthdr == "Invalid Date" && d.srcElement.__data__.wonNomination == 0) {
                 candwthdr = d3.timeDay()
                 statusvar = "Active";
                 candYearfmt = ""
                 tipcolor = "green"
                 hoverMsg = statusvar + "<br>" + candYearfmt}
+            else if (d.srcElement.__data__.wonNomination == 1 && d.srcElement.__data__.imcumbant == 2) {
+                nom = (d.srcElement.__data__.wonNomination)
+                imb = (d.srcElement.__data__.imcumbant)
+                statusvar = "Won"
+                //candYearfmt = parseSDt(candwthdr)
+                tipcolor = "green"
+                hoverMsg = statusvar}
+            else if (d.srcElement.__data__.wonNomination == 1 && d.srcElement.__data__.imcumbant == 0) {
+                nom = (d.srcElement.__data__.wonNomination)
+                imb = (d.srcElement.__data__.imcumbant)
+                statusvar = "Lost"
+                //candYearfmt = parseSDt(candwthdr)
+                tipcolor = "red"
+                hoverMsg = statusvar}   
+            else if (d.srcElement.__data__.wonNomination == 1 && d.srcElement.__data__.imcumbant == 3) {
+                nom = (d.srcElement.__data__.wonNomination)
+                imb = (d.srcElement.__data__.imcumbant)
+                statusvar = "Lost"
+                //candYearfmt = parseSDt(candwthdr)
+                tipcolor = "red"
+                hoverMsg = statusvar}    
+            else if (d.srcElement.__data__.wonNomination == 1 && d.srcElement.__data__.imcumbant == 1) {
+                nom = (d.srcElement.__data__.wonNomination)
+                imb = (d.srcElement.__data__.imcumbant)
+                statusvar = "Won"
+                //candYearfmt = parseSDt(candwthdr)
+                tipcolor = "green"
+                hoverMsg = statusvar}    
             else {
                 candwthdr = (d.srcElement.__data__.withdrew)
                 statusvar = "Withdrew"
                 candYearfmt = parseSDt(candwthdr)
                 tipcolor = "red"
-                hoverMsg = statusvar + "<br>" + candYearfmt}
-                console.log(candName + "<br>" + "<span style=\"color:" + tipcolor + "\">" + statusvar + "</span>" + "<br>" + candYearfmt)
+                hoverMsg = statusvar + "</span>" + "<br>" + candYearfmt}
+                //console.log(candName + "<br>" + "<span style=\"color:" + tipcolor + "\">" + statusvar + "</span>" + "<br>" + candYearfmt)
+                console.log(nom + "<br>" + "<span style=\"color:" + tipcolor + "\">" + imb + "</span>" + "<br>")
+            
             // tips.html(candName + "<br>" + "Announced" + "<br>" + candYearfmt)
-                
-            tips.html(candName + "<br>" + "<span style=\"color:" + tipcolor + "\">" + statusvar + "</span>" + "<br>" + candYearfmt)
+            tips.html(candName + "<br>" + "<span style=\"color:" + tipcolor + "\">" + hoverMsg)    
+            //tips.html(candName + "<br>" + "<span style=\"color:" + tipcolor + "\">" + statusvar + "</span>" + "<br>" + candYearfmt)
                 .style("left", (d.pageX + 10) + "px")
                 .style("top", (d.pageY - 15) + "px");
                 //.style("color", tipcolor);
