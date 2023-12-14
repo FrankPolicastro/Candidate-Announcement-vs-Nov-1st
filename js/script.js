@@ -27,7 +27,7 @@ function main() {
 
 function drawScatterplot(data) {
     
-    const margin = {top: 50, right: 50, bottom: 50, left: 50};
+    const margin = {top: 50, right: 50, bottom: 50, left: 125};
     const divWidth = document.getElementById("scatterplot").offsetWidth;
     const width = divWidth * 0.9;
     const height = window.innerHeight * 0.75;
@@ -275,9 +275,10 @@ function drawScatterplot(data) {
             if (row.withdrew == "Invalid Date") {var theDay = d3.timeDay()
                 return x2Scale(theDay)}
             else {return x2Scale(row.withdrew)};})
-        .attr("y1", function(row) { return yScale(row.id)})
-        .attr("y2", function(row) { return yScale(row.id)})
-        .attr("stroke", "grey")
+        .attr("y1", function(row) { return yScale(row.candidate)})
+        .attr("y2", function(row) { return yScale(row.candidate)})
+        //.attr("stroke", "grey")
+        .attr("stroke", function(row) {if (row.candidate == "") {return "white"} else {return "grey"}})
         .attr("stroke-width", "1px");    
 
     // add circles
@@ -287,7 +288,7 @@ function drawScatterplot(data) {
         .append("circle")
         .attr('class', 'announcedCircle')
         .attr("cx", function(row) { return xScale(row.announced)})
-        .attr("cy", function(row) { return yScale(row.id)})
+        .attr("cy", function(row) { return yScale(row.candidate)})
         
 
         // dynamic color change from 'red' to 'blue' - FP 11-13-2023
@@ -339,7 +340,7 @@ function drawScatterplot(data) {
                 if (row.withdrew == "Invalid Date") {var theDay = d3.timeDay();
                     return x2Scale(theDay)}
                 else {return x2Scale(row.withdrew)};})
-        .attr("cy", function(row) { return yScale(row.id)})
+        .attr("cy", function(row) { return yScale(row.candidate)})
         // dynamic color change from 'red' to 'blue' - FP 11-13-2023
         .style("fill", function(row){
             //console.log(row.party + " " + row.withdrew) 
