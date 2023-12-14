@@ -1,7 +1,7 @@
 function main() {
     // use D3 to read in data
     // Parse the Data
-    d3.csv("data/primaryCandidates.csv").then( function(data) {
+    d3.csv("data/primaryCandidates-Updated.csv").then( function(data) {
 
         var parseTime = d3.timeFormat("%b %d %Y");
         
@@ -14,7 +14,10 @@ function main() {
             //console.log((new Date(row.announced)))
             row.announced = (new Date(row.announced))
             row.announced = parseTime(row.announced)
-            //console.log(row.announced)
+            row.withdrew = (new Date(row.withdrew))
+            row.withdrew = parseTime(row.withdrew)
+            // console.log(row.announced)
+            // console.log(typeof(row.withdrew))
         //console.log(new Date(row.announced))
         });
 
@@ -28,7 +31,7 @@ function drawScatterplot(data) {
     const divWidth = document.getElementById("scatterplot").offsetWidth;
     const width = divWidth * 0.9;
     const height = window.innerHeight * 0.75;
-    const midtermDates = ["11/7/2006", "11/2/2010", "11/4/2014", "11/6/2018", "11/8/2022"]
+    const midtermDates = ["11/7/2006", "11/2/2010", "11/4/2014", "11/6/2018", "11/8/2022"] 
     
     // append the svg object to the body of the page
     // document.getElementById("scatterplot") = d3.select("#scatterplot")
@@ -87,11 +90,16 @@ function drawScatterplot(data) {
         let xScale = d3.scaleTime()
             .domain(d3.extent(data, function(d) {d.announced = (new Date(d.announced)) 
                 return (d.announced)}))
-            .range([margin.left-35, width])
-            console.log(d3.extent(data, function(d) {d.announced = (new Date(d.announced)) 
-                return (d.announced)}));
+            .range([margin.left-35, width]);
+            // console.log(d3.extent(data, function(d) {d.announced = (new Date(d.announced)) 
+            //     return (d.announced)}));
 
-
+        let x2Scale = d3.scaleTime()
+            .domain(d3.extent(data, function(d) {d.withdrew = (new Date(d.withdrew)) 
+                return (d.withdrew)}))
+            .range([margin.left-35, width]);
+            // console.log(d3.extent(data, function(d) {d.withdrew = (new Date(d.withdrew)) 
+            //     return (d.withdrew)}));
 
     // add x axis
 
@@ -210,7 +218,7 @@ function drawScatterplot(data) {
                         .style("opacity", 1);
                     //let midtrmyr = (midtermDates);
                     let indx = d.target.getAttribute('indx');
-                    console.log(indx);
+                    //console.log(indx);
                     tips.html(midtermDates[indx])
                         .style("left", (d.pageX + 10) + "px")
                         .style("top", (d.pageY - 15) + "px");
@@ -248,6 +256,21 @@ function drawScatterplot(data) {
 
         //.ticks(5)
 
+    // Lines
+    svg.selectAll("myline")
+    .data(data)
+    .join("line")
+        .attr("x1", function(row) { return xScale(row.announced)})
+        //.attr("x2", function(row) { return x2Scale(row.withdrew)})
+        .attr("x2", function(row) { 
+            if (row.withdrew == "Invalid Date") {var theDay = d3.timeDay()
+                return x2Scale(theDay)}
+            else {return x2Scale(row.withdrew)};})
+        .attr("y1", function(row) { return yScale(row.id)})
+        .attr("y2", function(row) { return yScale(row.id)})
+        .attr("stroke", "grey")
+        .attr("stroke-width", "1px");    
+
     // add circles
     svg.selectAll(".announcedCircle")
         .data(data)
@@ -258,6 +281,13 @@ function drawScatterplot(data) {
         .attr("cy", function(row) { return yScale(row.id)})
         // dynamic color change from 'red' to 'blue' - FP 11-13-2023
         .style("fill", function(row){ return row.party == 'D' ? 'blue' : 'red' })
+        // .style("visibility", function(row) {
+        //     console.log(row.announced)})
+        .style("visibility", function(row) { 
+                if (row.announced == "Mon Dec 04 2023 00:00:00 GMT-0500 (Eastern Standard Time)") {return "hidden"}
+                else if (row.announced == "Tue Nov 05 2024 00:00:00 GMT-0500 (Eastern Standard Time)") {return "hidden"}
+                else if (row.announced == "Invalid Date") {return "hidden"}
+                else {return "visible"};})
         .on('mouseover', function (d) {
             d3.select('announcedCircle').transition()
                 .duration('50')
@@ -269,8 +299,8 @@ function drawScatterplot(data) {
             let candYear = (d.srcElement.__data__.announced);
             var parseSDt = d3.timeFormat("%x");  //11-24-2023: why did parseTime work but parseSDt had to be declared closer to this append?
             let candYearfmt = parseSDt(candYear);
-            console.log(candName);
-            tips.html(candName + "<br>" + candYearfmt)
+            //console.log(candName);
+            tips.html(candName + "<br>" + "Announced" + "<br>" + candYearfmt)
                 .style("left", (d.pageX + 10) + "px")
                 .style("top", (d.pageY - 15) + "px");
         
@@ -283,6 +313,66 @@ function drawScatterplot(data) {
                 .duration('50')
                 .style("opacity", 0);
         }); 
+
+        svg.selectAll(".withdrewCircle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr('class', 'withdrewCircle')
+        //.attr("cx", function(row) { return x2Scale(row.withdrew)})
+        .attr("cx", function(row) {
+                if (row.withdrew == "Invalid Date") {var theDay = d3.timeDay();
+                    return x2Scale(theDay)}
+                else {return x2Scale(row.withdrew)};})
+        .attr("cy", function(row) { return yScale(row.id)})
+        // dynamic color change from 'red' to 'blue' - FP 11-13-2023
+        .style("fill", function(row){
+            //console.log(row.party + " " + row.withdrew) 
+            if (row.withdrew == "Invalid Date") {return "green"}
+            else if (row.party == 'D') {return "blue"}
+            else {return "red"};})
+            //
+            
+            // return row.party == 'D' ? 'blue' : 'red' })
+        // .style("visibility", function(row) {
+        //     console.log(row.withdrew)})
+        .style("visibility", function(row) {
+                //console.log(row.withdrew)
+                if (row.withdrew == "Mon Apr 17 2006 00:00:00 GMT-0400 (Eastern Daylight Time)") {return "hidden"}
+                else if (row.withdrew == "Tue Nov 05 2024 00:00:00 GMT-0500 (Eastern Standard Time)") {return "hidden"}
+                else if (row.withdrew == "Invalid Date") {return "visible "}
+                else {return "visible"};})
+        .on('mouseover', function (d) {
+            d3.select('withdrewCircle').transition()
+                .duration('50')
+                .attr('opacity', '.15');
+            tips.transition()
+                .duration(50)
+                .style("opacity", 1);
+            let candName = (d.srcElement.__data__.candidate);
+            let candwthdr = (d.srcElement.__data__.withdrew);
+            if (candwthdr == "Invalid Date") {
+                candwthdr = d3.timeDay()
+                statusvar = "Active";}
+            else {
+                candwthdr = (d.srcElement.__data__.withdrew)
+                statusvar = "Withdrew"};
+            var parseSDt = d3.timeFormat("%x");  //11-24-2023: why did parseTime work but parseSDt had to be declared closer to this append?
+            let candYearfmt = parseSDt(candwthdr);
+            //console.log(candwthdr);
+            tips.html(candName + "<br>" + statusvar + "<br>" + candYearfmt)
+                .style("left", (d.pageX + 10) + "px")
+                .style("top", (d.pageY - 15) + "px");
+        
+        })
+        .on('mouseout', function (d) {
+            d3.select('withdrewCircle').transition()
+                .duration('50')
+                .attr('opacity', '1');
+                tips.transition()
+                .duration('50')
+                .style("opacity", 0);
+        });     
 }
 
 
