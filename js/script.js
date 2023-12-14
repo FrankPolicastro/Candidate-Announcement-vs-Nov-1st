@@ -271,16 +271,11 @@ function drawScatterplot(data) {
         .attr("stroke", "grey")
         .attr("stroke-width", "1px");    
 
-    var cirkels = svg.selectAll("g")
-                    .data(data)
-                    .enter()
-                    .append("g");
-
     // add circles
-    cirkels.append("circle")
+    svg.selectAll(".announcedCircle")
         .data(data)
-        //.enter()
-        //.append("circle")
+        .enter()
+        .append("circle")
         .attr('class', 'announcedCircle')
         .attr("cx", function(row) { return xScale(row.announced)})
         .attr("cy", function(row) { return yScale(row.id)})
