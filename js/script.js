@@ -271,11 +271,16 @@ function drawScatterplot(data) {
         .attr("stroke", "grey")
         .attr("stroke-width", "1px");    
 
+    var cirkels = svg.selectAll("g")
+                    .data(data)
+                    .enter()
+                    .append("g");
+
     // add circles
-    svg.selectAll(".announcedCircle")
+    cirkels.append("circle")
         .data(data)
-        .enter()
-        .append("circle")
+        //.enter()
+        //.append("circle")
         .attr('class', 'announcedCircle')
         .attr("cx", function(row) { return xScale(row.announced)})
         .attr("cy", function(row) { return yScale(row.id)})
@@ -292,7 +297,7 @@ function drawScatterplot(data) {
                 else {return "visible"};})
         
                 //STAR
-        .attr("src", "https://upload.wikimedia.org/wikipedia/commons/6/63/Star%2A.svg")
+        //.attr("src", "https://upload.wikimedia.org/wikipedia/commons/6/63/Star%2A.svg")
         
         .on('mouseover', function (d) {
             d3.select('announcedCircle').transition()
