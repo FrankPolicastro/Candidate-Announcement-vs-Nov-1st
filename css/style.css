@@ -47,3 +47,9 @@ div.tips {
     opacity: 0.75;
     stroke: black;
 }
+
+.withdrewCircle {
+    r: 7.5;
+    opacity: 0.75;
+    stroke: greenyellow
+}
